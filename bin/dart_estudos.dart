@@ -1,9 +1,11 @@
-import 'package:dart_estudos/dart_estudos.dart' as dart_estudos;
+void main() {
+  String nome = "Carlos";
+  int idade = 28;
+  double altura = 1.75;
+  bool programador = true;
 
-void main(List<String> arguments) {
-  String nomeUsuario = "Carlos";
-  int idadeUsuario = 28;
-
-  print("Nome: $nomeUsuario");
-  print("Idade: $idadeUsuario");
+  print("Nome: $nome");
+  print("Idade: $idade");
+  print("Altura: $altura");
+  print("É programador? $programador");
 }
