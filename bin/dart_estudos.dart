@@ -1,11 +1,9 @@
 void main() {
-  String nome = "Carlos";
-  int idade = 28;
-  double altura = 1.75;
-  bool programador = true;
+  var nome = "Carlos";
+  final anoNascimento = 1997;
+  const pi = 3.1415;
 
   print("Nome: $nome");
-  print("Idade: $idade");
-  print("Altura: $altura");
-  print("É programador? $programador");
+  print("Ano de Nascimento: $anoNascimento");
+  print("Valor de Pi: $pi");
 }
