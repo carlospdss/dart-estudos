@@ -1,5 +1,6 @@
 void main() {
-  for(int i = 1; i <= 3; i++){
-    print("Verificando arquivo $i");
+  List<String> alteracoes = ["adicionado", "modificado", "removido"];
+  for (int i = 0; i <= alteracoes.length; i++) {
+    print(alteracoes[i]);
   }
 }
