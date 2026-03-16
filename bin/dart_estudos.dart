@@ -1,6 +1,10 @@
+void formatarStatus(String nome) {
+    print("LOG: O arquivo $nome foi processado.");
+  }
+
 void main() {
   List<String> alteracoes = ["adicionado", "modificado", "removido"];
-  for (int i = 0; i < alteracoes.length; i++) {
-    print(alteracoes[i]);
+  for (String item in alteracoes) {
+    formatarStatus(item);
   }
 }
