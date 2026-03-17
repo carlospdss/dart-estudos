@@ -1,8 +1,16 @@
 class Usuario {
   String nome;
-  int seguidores;
+  int _seguidores;
 
-  Usuario(this.nome, this.seguidores);
+  Usuario(this.nome, this._seguidores);
+
+  int get seguidores => _seguidores;
+
+  void adicionarSeguidores(int novosSeguidores) {
+    if(novosSeguidores > 0){
+      _seguidores += novosSeguidores;
+    }
+  }
 
   String postar() {
     return "Postagem realizada!";
@@ -19,10 +27,13 @@ void main() {
   usuariosDoApp.add(Usuario("Bruno", 500));
   usuariosDoApp.add(Usuario("Carlos", 90));
 
+for (Usuario usuario in usuariosDoApp) {
+  usuario.adicionarSeguidores(50);
+}
+
   for (Usuario usuario in usuariosDoApp) {
     print(usuario.postar());
     print(usuario.quantidadeSeguidores());
     print("-----");
   }
 }
-
