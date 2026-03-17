@@ -1,8 +1,9 @@
-void formatarStatus({required String nome, String usuario = "Desconhecido"}) {
-    print("LOG: O arquivo $nome foi processado por $usuario.");
+String criarSaudacao (String nome) {
+    return "Bem-vindo, $nome!";
   }
 
 void main() {
-  formatarStatus(nome: "main.dart", usuario: "Felipe");
-  formatarStatus(nome: "README.md");
+  String mensagemFinal = criarSaudacao("Carlos");
+
+  print(mensagemFinal);
 }
