@@ -14,12 +14,15 @@ class Usuario {
 }
 
 void main() {
-  Usuario usuario1 = Usuario("Carlos", 90);
-  Usuario usuario2 = Usuario("Ana", 1500);
+  List<Usuario> usuariosDoApp = [];
+  usuariosDoApp.add(Usuario("Ana", 1500));
+  usuariosDoApp.add(Usuario("Bruno", 500));
+  usuariosDoApp.add(Usuario("Carlos", 90));
 
-  print(usuario1.postar());
-  print(usuario1.quantidadeSeguidores());
-  print(usuario2.postar());
-  print(usuario2.quantidadeSeguidores());
+  for (Usuario usuario in usuariosDoApp) {
+    print(usuario.postar());
+    print(usuario.quantidadeSeguidores());
+    print("-----");
+  }
 }
 
