@@ -1,10 +1,77 @@
+import 'dart:io';
+import 'dart:math';
+
+class Gerenciador {
+  List<Usuario> bancoDeUsuarios = [];
+  List<Usuario> bancoDeBanidos = [];
+
+  void adicionarUsuario(Usuario usuario) {
+    usuario.id = proximoId();
+    bancoDeUsuarios.add(usuario);
+    print(
+      "Usuário ${usuario.nome} adicionado, seu ID de usuário é: ${usuario.id}",
+    );
+  }
+
+  void adicionarBanido(Usuario usuario) {
+    bancoDeBanidos.add(usuario);
+  }
+
+  void removerUsuario(Usuario usuario) {
+    bancoDeUsuarios.remove(usuario);
+  }
+
+  void removerBanido(Usuario usuario) {
+    bancoDeBanidos.remove(usuario);
+  }
+
+  bool verificarUsuario(String usuario, String senha) {
+    for (Usuario u in bancoDeUsuarios) {
+      if (u.usuario == usuario && u.senha == senha) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Usuario? verificarId(int id) {
+    for (Usuario u in bancoDeUsuarios) {
+      if (u.id == id) {
+        return u;
+      }
+    }
+    return null;
+  }
+
+  int proximoId() {
+    if (bancoDeUsuarios.isEmpty) {
+      return 1;
+    } else {
+      return bancoDeUsuarios.last.id + 1;
+    }
+  }
+}
+
 class Usuario {
   String nome;
-  int _seguidores;
+  int _seguidores = 0;
+  String _usuario;
+  String _senha;
+  bool estaAtivo = true;
+  int id;
+  final List<String> nivelAcesso = [
+    "Visitante",
+    "Leitor",
+    "Colaborador",
+    "Moderador",
+    "Administrador",
+  ];
 
-  Usuario(this.nome, this._seguidores);
+  Usuario(this.nome, this._usuario, this._senha, this.id);
 
   int get seguidores => _seguidores;
+  String get usuario => _usuario;
+  String get senha => _senha;
 
   void adicionarSeguidores(int novosSeguidores) {
     if (novosSeguidores > 0) {
@@ -22,65 +89,133 @@ class Usuario {
 }
 
 class Moderador extends Usuario {
-  Moderador(String nome, int seguidores) : super(nome, seguidores);
+  Moderador(String nome, String usuario, String senha, int id)
+    : super(nome, usuario, senha, id);
 
-  void banirUsuario(Usuario usuario, bool banido) {
+  String get nivel => nivelAcesso[3];
+
+  void banirUsuario(int id, Usuario usuario, bool banido) {
+    // Definindo o status do usuário como inativo se banido for true
     if (banido == true) {
+      usuario.estaAtivo = false;
       print("O usuário ${usuario.nome} foi banido.");
     }
   }
 }
 
-void main() {
-  Moderador moderador = Moderador("Diana", 2000);
+class Login {
+  String usuario;
+  String senha;
+  Gerenciador gerenciador = Gerenciador();
 
-  List<Usuario> usuariosDoApp = [];
-  usuariosDoApp.add(Usuario("Ana", 1500));
-  usuariosDoApp.add(Usuario("Bruno", 500));
-  usuariosDoApp.add(Usuario("Carlos", 90));
+  Login(this.usuario, this.senha, this.gerenciador);
 
-  List<Usuario> usuariosBanidos = [];
-
-  for (Usuario usuario in usuariosDoApp) {
-    usuario.adicionarSeguidores(50);
+  Future<void> fazerLogin() async {
+    print("Verificando credenciais...");
+    await Future.delayed(Duration(seconds: 3));
   }
 
-  for (Usuario usuario in usuariosDoApp) {
-    print(usuario.postar());
-    print(usuario.quantidadeSeguidores());
-    print("-----");
-  }
+  String login() {
+    bool usuarioVerificado = false;
+    String nomeUsuario = "";
 
-  bool botaoBanirUsuario = true; // Simulando o clique no botão de banir usuário
-  for (Usuario banido in usuariosDoApp) {
-    if (banido.nome == "Carlos") {
-      botaoBanirUsuario =
-          true; // Simulando o clique no botão de banir usuário para Carlos
-      break;
+    for (Usuario u in this.gerenciador.bancoDeUsuarios) {
+      if (u.usuario == this.usuario && u.senha == this.senha) {
+        usuarioVerificado = true;
+        nomeUsuario = u.nome;
+        break;
+      }
+    }
+    if (usuarioVerificado == true) {
+      return "Login bem-sucedido! Bem-vindo, $nomeUsuario!";
+    } else {
+      return "Credenciais inválidas. Tente novamente.";
     }
   }
+}
 
-  if (botaoBanirUsuario) {
-    usuariosBanidos.add(
-      usuariosDoApp[2],
-    ); // Adicionando o usuário banido à lista de usuários banidos
-    usuariosDoApp.removeAt(
-      2,
-    ); // Removendo o usuário banido da lista de usuários do app
-    moderador.banirUsuario(usuariosBanidos[0], true); // Banindo
+void main() async {
+  Gerenciador gerenciador = Gerenciador();
 
-    print(" ");
+  bool continuar = true;
+  int opcao = 0;
 
-    print("Usuários ativos: ");
-    for (Usuario ativos in usuariosDoApp) {
-      print(ativos.nome);
+  while (continuar) {
+    print("Bem-vindo ao aplicativo de estudos!");
+    print("1. Criar conta");
+    print("2. Fazer login");
+    print("3. Ver usuários ativos");
+    print("4. Ver usuários banidos");
+    print("5. Banir usuário");
+    print("6. Sair");
+    print("Digite a opção desejada:");
+    try {
+      opcao = int.parse(stdin.readLineSync()!);
+    } catch (e) {
+      print("Entrada inválida. Por favor, digite um número.");
     }
+    switch (opcao) {
+      case 1:
+        print("Digite seu nome:");
+        String? entrada = stdin.readLineSync();
+        print("Crie seu nome de usuário:");
+        String? usuarioEntrada = stdin.readLineSync();
+        print("Crie sua senha:");
+        String? senhaEntrada = stdin.readLineSync();
+        Usuario novoUsuario = Usuario(
+          entrada!,
+          usuarioEntrada!,
+          senhaEntrada!,
+          0,
+        );
+        gerenciador.adicionarUsuario(novoUsuario);
+        print(
+          "Conta criada com sucesso! Bem-vindo, Faça login para acessar sua conta.",
+        );
+        break;
+      case 2:
+        print("Digite seu usuario:");
+        String? usuario = stdin.readLineSync();
+        print("Digite sua senha:");
+        String? senha = stdin.readLineSync();
+        Login login = Login(usuario!, senha!, gerenciador);
 
-    print(" ");
+        await login.fazerLogin();
+        print(login.login());
+        break;
+      case 3:
+        print("Exibindo usuários ativos...");
+        for (Usuario ativo in gerenciador.bancoDeUsuarios) {
+          if (ativo.estaAtivo) {
+            print("${ativo.nome}, ${ativo.usuario} ${ativo.id}");
+          }
+        }
+        break;
+      case 4:
+        print("Exibindo usuários banidos...");
+        for (Usuario banido in gerenciador.bancoDeBanidos) {
+          print(banido.nome);
+        }
+        break;
+      case 5:
+        print("Digite o ID do usuário que deseja banir:");
+        int id = int.parse(stdin.readLineSync()!);
+        Usuario? procurarUsuario = gerenciador.verificarId(id);
 
-    print("Usuários banidos: ");
-    for (Usuario banidos in usuariosBanidos) {
-      print(banidos.nome);
+        if (procurarUsuario != null) {
+          gerenciador.adicionarBanido(procurarUsuario);
+          gerenciador.removerUsuario(procurarUsuario);
+          break;
+        } else {
+          print("ID inválido. Por favor, tente novamente.");
+        }
+        break;
+      case 6:
+        print("Saindo do aplicativo. Até logo!");
+        continuar = false;
+        break;
+      default:
+        print("Opção inválida. Por favor, escolha uma opção válida.");
     }
   }
 }
