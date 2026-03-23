@@ -110,9 +110,10 @@ class Login {
 
   Login(this.usuario, this.senha, this.gerenciador);
 
-  Future<void> fazerLogin() async {
+  Future<bool> fazerLogin() async {
     print("Verificando credenciais...");
     await Future.delayed(Duration(seconds: 3));
+    return true;
   }
 
   String login() {
@@ -139,6 +140,7 @@ void main() async {
 
   bool continuar = true;
   int opcao = 0;
+  bool sucesso = false;
 
   while (continuar) {
     print("Bem-vindo ao aplicativo de estudos!");
@@ -152,7 +154,10 @@ void main() async {
     try {
       opcao = int.parse(stdin.readLineSync()!);
     } catch (e) {
-      print("Entrada inválida. Por favor, digite um número.");
+      print(
+        "Entrada inválida. Por favor, digite um número válido entre as opções do menu.",
+      );
+      continue;
     }
     switch (opcao) {
       case 1:
@@ -179,9 +184,10 @@ void main() async {
         print("Digite sua senha:");
         String? senha = stdin.readLineSync();
         Login login = Login(usuario!, senha!, gerenciador);
-
-        await login.fazerLogin();
-        print(login.login());
+        sucesso = await login.fazerLogin();
+        if (sucesso) {
+          print(login.login());
+        }
         break;
       case 3:
         print("Exibindo usuários ativos...");
@@ -199,7 +205,14 @@ void main() async {
         break;
       case 5:
         print("Digite o ID do usuário que deseja banir:");
-        int id = int.parse(stdin.readLineSync()!);
+        try {
+          int id = int.parse(stdin.readLineSync()!);
+        } catch (e) {
+          print(
+            "Entrada inválida. Por favor, digite um número válido para o ID do usuário.",
+          );
+          break;
+        }
         Usuario? procurarUsuario = gerenciador.verificarId(id);
 
         if (procurarUsuario != null) {
